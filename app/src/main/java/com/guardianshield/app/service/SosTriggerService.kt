@@ -97,6 +97,11 @@ class SosTriggerService : Service() {
     private fun executeSos(triggerType: String) {
         serviceScope.launch {
             try {
+                if (!NoNetworkEmergencyService.isNetworkAvailable(this@SosTriggerService)) {
+                    Log.w(TAG, "NO NETWORK DETECTED: triggering offline emergency mode")
+                    NoNetworkEmergencyService.start(this@SosTriggerService)
+                }
+
                 // IMPORTANT: Ensure backend login session is recovered from secure storage
                 // since this is often launched from a background/cold service state.
                 SupabaseProvider.client.auth.awaitInitialization()
@@ -168,6 +173,8 @@ class SosTriggerService : Service() {
     private fun cancelSos() {
         serviceScope.launch {
             try {
+                NoNetworkEmergencyService.stop(this@SosTriggerService)
+                
                 val prefs = GuardianApp.instance.preferencesManager
                 prefs.setSosActive(false)
                 val eventId = prefs.activeSosEventId.first()
