@@ -12,6 +12,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.guardianshield.app.service.SosTriggerService
+import com.guardianshield.app.service.VolumeButtonSosService
 import com.guardianshield.app.ui.screens.*
 import com.guardianshield.app.ui.theme.DarkBackground
 import com.guardianshield.app.ui.theme.GuardianShieldTheme
@@ -31,6 +32,11 @@ class MainActivity : ComponentActivity() {
         // Determine start destination
         val prefs = GuardianApp.instance.preferencesManager
         val isSetup = runBlocking { prefs.isSetupComplete.first() }
+
+        // Start Hardware Volume Trigger Monitor 
+        if (isSetup) {
+            VolumeButtonSosService.start(this)
+        }
 
         setContent {
             GuardianShieldTheme {

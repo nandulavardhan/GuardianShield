@@ -56,10 +56,16 @@ object EmergencySmsSender {
 
         // Send to all emergency contacts from Supabase
         try {
-            val userId = SupabaseProvider.client.auth.currentUserOrNull()?.id ?: return
+            SupabaseProvider.client.auth.awaitInitialization()
+            val user = SupabaseProvider.client.auth.currentUserOrNull()
+            if (user == null) {
+                Log.e(TAG, "Cannot fetch contacts: User session is empty (null). SMS aborted!")
+                return
+            }
+            
             val contacts = SupabaseProvider.client.postgrest["emergency_contacts"]
                 .select {
-                    filter { eq("user_id", userId) }
+                    filter { eq("user_id", user.id) }
                 }
                 .decodeList<EmergencyContact>()
 

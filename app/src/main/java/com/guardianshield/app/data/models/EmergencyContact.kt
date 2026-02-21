@@ -11,5 +11,14 @@ data class EmergencyContact(
     val phone: String = "",
     val relationship: String = "",
     @SerialName("is_pcr") val isPcr: Boolean = false,
-    @SerialName("created_at") val createdAt: String = ""
+    @SerialName("created_at") val createdAt: String? = null
+)
+
+@Serializable
+data class EmergencyContactInsert(
+    @SerialName("user_id") val userId: String,
+    val name: String,
+    val phone: String,
+    val relationship: String,
+    @SerialName("is_pcr") val isPcr: Boolean = false
 )

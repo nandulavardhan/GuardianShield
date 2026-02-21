@@ -98,6 +98,9 @@ dependencies {
     // DataStore (Preferences)
     implementation("androidx.datastore:datastore-preferences:1.0.0")
 
+    // Support for MediaSessionCompat (Volume Key interception)
+    implementation("androidx.media:media:1.7.0")
+
     // Supabase
     val supabaseVersion = "2.1.4"
     implementation("io.github.jan-tennert.supabase:gotrue-kt:$supabaseVersion")

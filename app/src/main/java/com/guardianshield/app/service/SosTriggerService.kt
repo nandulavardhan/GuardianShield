@@ -98,6 +98,10 @@ class SosTriggerService : Service() {
     private fun executeSos(triggerType: String) {
         serviceScope.launch {
             try {
+                // IMPORTANT: Ensure backend login session is recovered from secure storage
+                // since this is often launched from a background/cold service state.
+                SupabaseProvider.client.auth.awaitInitialization()
+
                 val prefs = GuardianApp.instance.preferencesManager
                 prefs.setSosActive(true)
 

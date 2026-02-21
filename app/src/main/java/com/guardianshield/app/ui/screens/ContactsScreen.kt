@@ -88,18 +88,21 @@ fun ContactsScreen(
                             scope.launch {
                                 try {
                                     val userId = SupabaseProvider.client.auth.currentUserOrNull()?.id ?: ""
-                                    val contact = EmergencyContact(
+                                    val contactInsert = com.guardianshield.app.data.models.EmergencyContactInsert(
                                         userId = userId,
                                         name = newName,
                                         phone = newPhone,
                                         relationship = newRelation
                                     )
-                                    SupabaseProvider.client.postgrest["emergency_contacts"]
-                                        .insert(contact)
-                                    contacts = contacts + contact
+                                    val insertedContact = SupabaseProvider.client.postgrest["emergency_contacts"]
+                                        .insert(contactInsert) { select() }
+                                        .decodeSingle<EmergencyContact>()
+                                    contacts = contacts + insertedContact
                                     showAddDialog = false
                                     newName = ""; newPhone = ""; newRelation = ""
-                                } catch (_: Exception) {}
+                                } catch (e: Exception) {
+                                    android.util.Log.e("ContactsScreen", "Error adding contact", e)
+                                }
                             }
                         }
                     },
