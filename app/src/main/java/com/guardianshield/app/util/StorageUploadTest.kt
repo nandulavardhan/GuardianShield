@@ -19,18 +19,6 @@ object StorageUploadTest {
         }
         Log.d(TAG, "Auth OK - user=${session.user?.id}")
 
-        // Step 2: Upload to evidence-photos bucket
-        try {
-            val bytes = "Hello from GuardianShield".encodeToByteArray()
-            val path = "test/photo_test_${System.currentTimeMillis()}.txt"
-
-            SupabaseProvider.client.storage["evidence-photos"].upload(path, bytes)
-
-            Log.d(TAG, "Photo bucket upload OK - path=$path")
-        } catch (e: Exception) {
-            Log.e(TAG, "Photo bucket upload FAILED: ${e.message}", e)
-        }
-
         // Step 3: Upload to evidence-audio bucket
         try {
             val bytes = "Audio test from GuardianShield".encodeToByteArray()

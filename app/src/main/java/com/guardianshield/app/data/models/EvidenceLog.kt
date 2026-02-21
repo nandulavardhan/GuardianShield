@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 data class EvidenceLog(
     val id: String = "",
     @SerialName("sos_event_id") val sosEventId: String = "",
-    val type: String = "", // "photo_front", "photo_rear", "audio_clip"
+    val type: String = "", // "audio_clip"
     @SerialName("storage_path") val storagePath: String = "",
     @SerialName("file_size") val fileSize: Long? = null,
     @SerialName("created_at") val createdAt: String = ""

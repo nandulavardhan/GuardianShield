@@ -317,7 +317,7 @@ fun DeadManSwitchScreen(
                     colors = CardDefaults.cardColors(containerColor = CardBackground)
                 ) {
                     Text(
-                        "💡 If the phone is snatched and you can't enter your PIN within 10 seconds, SOS will trigger automatically with SMS, GPS, and burst photos.",
+                        "💡 If the phone is snatched and you can't enter your PIN within 10 seconds, SOS will trigger automatically with SMS and GPS.",
                         modifier = Modifier.padding(16.dp),
                         fontSize = 12.sp,
                         color = TextSecondary,

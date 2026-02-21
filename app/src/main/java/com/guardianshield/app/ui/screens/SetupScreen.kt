@@ -257,7 +257,6 @@ fun SetupScreen(
 
                     val perms = listOf(
                         "📍 Location" to "GPS tracking during emergencies",
-                        "📸 Camera" to "Burst photos for evidence",
                         "📨 SMS" to "Send alerts to emergency contacts",
                         "🎙️ Microphone" to "Audio clip in digital breadcrumbs",
                         "🔔 Notifications" to "SOS status notifications"

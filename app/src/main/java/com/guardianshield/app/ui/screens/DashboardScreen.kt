@@ -250,15 +250,6 @@ fun DashboardScreen(
             Spacer(modifier = Modifier.height(8.dp))
 
             FeatureInfoCard(
-                icon = Icons.Default.CameraAlt,
-                title = "Burst Capture",
-                description = "6 photos (front + rear) captured silently on SOS",
-                color = AccentAmber
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            FeatureInfoCard(
                 icon = Icons.Default.BatteryAlert,
                 title = "Digital Breadcrumbs",
                 description = "Auto-sends location & audio when battery < 5%",

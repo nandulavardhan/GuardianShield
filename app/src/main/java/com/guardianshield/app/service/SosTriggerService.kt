@@ -21,7 +21,6 @@ import com.google.android.gms.location.Priority
 import io.github.jan.supabase.gotrue.auth
 import io.github.jan.supabase.postgrest.postgrest
 import io.github.jan.supabase.storage.storage
-import com.guardianshield.app.camera.BurstCaptureManager
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.tasks.await
@@ -146,27 +145,6 @@ class SosTriggerService : Service() {
                             recordAndUploadAudio(audioFile, result.id)
                         } catch (e: Exception) {
                             Log.e(TAG, "Audio evidence failed: ${e.message}", e)
-                        }
-                    }
-
-                    // 6. Upload any existing burst photos to evidence-photos bucket
-                    launch {
-                        try {
-                            val evidenceDir = File(filesDir, "evidence")
-                            if (evidenceDir.exists()) {
-                                val photos = evidenceDir.listFiles { f ->
-                                    f.extension == "jpg"
-                                }?.toList() ?: emptyList()
-                                if (photos.isNotEmpty()) {
-                                    Log.d(TAG, "Uploading ${photos.size} burst photos")
-                                    BurstCaptureManager(applicationContext)
-                                        .uploadEvidence(photos, result.id)
-                                } else {
-                                    Log.w(TAG, "No burst photos found to upload")
-                                }
-                            }
-                        } catch (e: Exception) {
-                            Log.e(TAG, "Photo upload failed: ${e.message}", e)
                         }
                     }
 
