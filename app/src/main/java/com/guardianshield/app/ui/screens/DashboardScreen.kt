@@ -143,7 +143,7 @@ fun DashboardScreen(
                         )
                         Text(
                             if (isSosActive) "Emergency alerts sent. Location tracking active."
-                            else "All systems ready. 3-finger swipe down to trigger SOS.",
+                            else "All systems ready.",
                             fontSize = 12.sp,
                             color = TextSecondary
                         )
@@ -206,15 +206,6 @@ fun DashboardScreen(
                     }
                 }
             }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Text(
-                "Or swipe down with 3 fingers anywhere",
-                fontSize = 12.sp,
-                color = TextMuted,
-                textAlign = TextAlign.Center
-            )
 
             Spacer(modifier = Modifier.height(32.dp))
 
