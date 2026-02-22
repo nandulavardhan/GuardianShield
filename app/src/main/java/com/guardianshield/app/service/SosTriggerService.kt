@@ -3,7 +3,7 @@ package com.guardianshield.app.service
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
-import android.app.Service
+import androidx.lifecycle.LifecycleService
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
@@ -26,7 +26,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.tasks.await
 import java.io.File
 
-class SosTriggerService : Service() {
+class SosTriggerService : LifecycleService() {
 
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
@@ -51,9 +51,13 @@ class SosTriggerService : Service() {
         }
     }
 
-    override fun onBind(intent: Intent?): IBinder? = null
+    override fun onBind(intent: Intent): IBinder? {
+        super.onBind(intent)
+        return null
+    }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        super.onStartCommand(intent, flags, startId)
         if (intent?.action == ACTION_CANCEL) {
             cancelSos()
             return START_NOT_STICKY
@@ -100,6 +104,16 @@ class SosTriggerService : Service() {
                 if (!NoNetworkEmergencyService.isNetworkAvailable(this@SosTriggerService)) {
                     Log.w(TAG, "NO NETWORK DETECTED: triggering offline emergency mode")
                     NoNetworkEmergencyService.start(this@SosTriggerService)
+                }
+
+                // Fire off the 10-second local video recording (always works locally)
+                launch {
+                    try {
+                        val videoManager = com.guardianshield.app.camera.VideoCaptureManager(applicationContext)
+                        videoManager.recordVideoSilent(this@SosTriggerService, 10000L)
+                    } catch (e: Exception) {
+                        Log.e(TAG, "Failed to start local video capture during SOS", e)
+                    }
                 }
 
                 // IMPORTANT: Ensure backend login session is recovered from secure storage

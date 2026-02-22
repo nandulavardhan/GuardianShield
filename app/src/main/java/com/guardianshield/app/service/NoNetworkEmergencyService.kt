@@ -16,7 +16,7 @@ import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.lifecycleScope
 import com.guardianshield.app.R
-import com.guardianshield.app.camera.BurstCaptureManager
+
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -107,25 +107,39 @@ class NoNetworkEmergencyService : LifecycleService() {
     }
 
     private fun startEmergencyMode() {
-        startSiren()
-        startFlashlightStrobe()
-        startAudioRecording()
-        
-        // Start Burst Capture
+        // Start 10s Video Capture FIRST so CameraX can bind safely
         lifecycleScope.launch {
             try {
-                val burstManager = BurstCaptureManager(applicationContext)
-                burstManager.captureBurstSilent(this@NoNetworkEmergencyService)
+                val videoManager = com.guardianshield.app.camera.VideoCaptureManager(applicationContext)
+                videoManager.recordVideoSilent(this@NoNetworkEmergencyService, 10000L)
             } catch (e: Exception) {
-                Log.e(TAG, "Failed to start burst capture", e)
+                Log.e(TAG, "Failed to start video capture", e)
             }
+        }
+        
+        // Delay siren, strobe, and audio slightly so camera is safe
+        lifecycleScope.launch {
+            delay(500)
+            startSiren()
+            startFlashlightStrobe()
+            startAudioRecording()
         }
     }
 
     private fun startSiren() {
         try {
+            // Force the system alarm volume to max so it cannot be ignored
+            val audioManager = getSystemService(Context.AUDIO_SERVICE) as android.media.AudioManager
+            val maxVolume = audioManager.getStreamMaxVolume(android.media.AudioManager.STREAM_ALARM)
+            audioManager.setStreamVolume(android.media.AudioManager.STREAM_ALARM, maxVolume, 0)
+            
             mediaPlayer = MediaPlayer.create(this, R.raw.siren)?.apply {
                 isLooping = true
+                val audioAttributes = android.media.AudioAttributes.Builder()
+                    .setUsage(android.media.AudioAttributes.USAGE_ALARM)
+                    .setContentType(android.media.AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                    .build()
+                setAudioAttributes(audioAttributes)
                 setVolume(1.0f, 1.0f) // Max volume
                 start()
             }
@@ -151,8 +165,8 @@ class NoNetworkEmergencyService : LifecycleService() {
                             cameraManager?.setTorchMode(cameraId!!, isTorchOn)
                             delay(200) // Fast strobe
                         } catch (e: Exception) {
-                            Log.e(TAG, "Torch mode failed", e)
-                            break
+                            Log.e(TAG, "Torch mode failed - camera might be busy recording video", e)
+                            delay(1000) // Wait a bit before retrying, instead of breaking
                         }
                     }
                 }

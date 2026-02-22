@@ -259,6 +259,7 @@ fun SetupScreen(
                         "📍 Location" to "GPS tracking during emergencies",
                         "📨 SMS" to "Send alerts to emergency contacts",
                         "🎙️ Microphone" to "Audio clip in digital breadcrumbs",
+                        "📷 Camera" to "Secure local video capture during SOS",
                         "🔔 Notifications" to "SOS status notifications"
                     )
 
