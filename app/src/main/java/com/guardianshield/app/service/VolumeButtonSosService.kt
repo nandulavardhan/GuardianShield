@@ -98,11 +98,11 @@ class VolumeButtonSosService : Service() {
             override fun onAdjustVolume(direction: Int) {
                 val currentTime = System.currentTimeMillis()
                 
-                if (direction == AudioManager.ADJUST_RAISE) {
+                if (direction > 0) { // Volume UP
                     Log.d(TAG, "Volume UP pressed")
                     lastVolUpTime = currentTime
                     checkTrigger()
-                } else if (direction == AudioManager.ADJUST_LOWER) {
+                } else if (direction < 0) { // Volume DOWN
                     Log.d(TAG, "Volume DOWN pressed")
                     lastVolDownTime = currentTime
                     checkTrigger()
@@ -116,8 +116,8 @@ class VolumeButtonSosService : Service() {
     }
 
     private fun checkTrigger() {
-        // If both Volume Up and Volume Down were pressed within 500ms
-        if (lastVolUpTime > 0 && lastVolDownTime > 0 && Math.abs(lastVolUpTime - lastVolDownTime) <= 500) {
+        // If both Volume Up and Volume Down were pressed within 2000ms (2 seconds)
+        if (lastVolUpTime > 0 && lastVolDownTime > 0 && Math.abs(lastVolUpTime - lastVolDownTime) <= 2000) {
             Log.d(TAG, "SOS Volume Trigger Detected!")
             
             // Reset times to prevent multiple rapid triggers
